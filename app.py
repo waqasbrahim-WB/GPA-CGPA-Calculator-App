@@ -97,21 +97,29 @@ if st.button("Calculate GPA & CGPA"):
             </div>
             """, unsafe_allow_html=True)
 
-        # --- Charts ---
+        # --- Prepare DataFrame ---
         df = pd.DataFrame({
             "Subject": [f"Subject {i+1}" for i in range(num_subjects)],
             "Marks": marks_list,
             "Grades": grades
         })
 
+        # --- Area Chart for Marks ---
         st.markdown("<h2>📈 Marks Area Chart</h2>", unsafe_allow_html=True)
         fig_area = px.area(df, x="Subject", y="Marks", text="Marks", markers=True,
                            color_discrete_sequence=px.colors.qualitative.Pastel)
+        fig_area.update_layout(yaxis=dict(range=[0, 100]))
         st.plotly_chart(fig_area, use_container_width=True)
 
+        # --- Pie Chart for Grade Distribution ---
         st.markdown("<h2>🥧 Grade Distribution Pie Chart</h2>", unsafe_allow_html=True)
         grade_counts = df['Grades'].value_counts().reset_index()
         grade_counts.columns = ['Grade', 'Count']
-        fig_pie = px.pie(grade_counts, names='Grade', values='Count', color='Grade',
-                         color_discrete_sequence=px.colors.sequential.Vivid)
+        fig_pie = px.pie(
+            grade_counts,
+            names='Grade',
+            values='Count',
+            color='Grade',
+            color_discrete_sequence=px.colors.qualitative.Pastel  # ✅ fixed!
+        )
         st.plotly_chart(fig_pie, use_container_width=True)
